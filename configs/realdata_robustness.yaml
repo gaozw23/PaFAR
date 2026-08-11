@@ -1,0 +1,14 @@
+master_seed: 20260804
+additional_internal_splits: 9
+additional_target_partitions: 49
+hmax: [96, 120, 168, null]
+pooled_calibration: true
+all_recorded_episode_pfa: true
+smooth_length: [1, 3]
+subgroups:
+  age: [50, 65, 80]
+  icu_type: true
+  sex: true
+  hospital: true
+  exposure_quartile: true
+

@@ -1,0 +1,27 @@
+{
+  "filters": {
+    "condition": "primary",
+    "is_alias": false,
+    "operating_alpha": [
+      0.05,
+      0.1
+    ],
+    "scenarios": [
+      "S3",
+      "E2"
+    ]
+  },
+  "methods": [
+    "Binwise Bonferroni",
+    "Pointwise-alpha",
+    "PaFAR-F",
+    "PaFAR-T",
+    "PaFAR-HC"
+  ],
+  "operating_alpha": [
+    0.05,
+    0.1
+  ],
+  "source": "outputs/production/all_replicate_results.csv.gz",
+  "target_m0": null
+}

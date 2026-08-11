@@ -1,0 +1,7 @@
+{
+  "alpha": 0.1,
+  "bootstrap": "hospital-stratified whole-patient, B=1000",
+  "figure": 8,
+  "input_csv_sha256": "0f7a3cb0fc123a7ab303d96379b32cd04688979dd5dd3332142a1f02a5d886f2",
+  "input_rows": 2520
+}

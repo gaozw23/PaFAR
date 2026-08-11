@@ -1,0 +1,387 @@
+﻿diff --git a/literature/backups/PaFAR_before_primary_results_20260803T131112Z.tex b/literature/PaFAR.tex
+index e4a23d5..e7ef1d6 100644
+--- a/literature/backups/PaFAR_before_primary_results_20260803T131112Z.tex
++++ b/literature/PaFAR.tex
+@@ -20,6 +20,7 @@
+ \usetikzlibrary{arrows.meta,positioning,fit,calc}
+ \usepackage{caption,subcaption}
+ \usepackage{float}
++\usepackage{placeins}
+ \usepackage{algorithm}
+ \usepackage{algpseudocode}
+ \usepackage{enumitem}
+@@ -33,8 +34,14 @@
+ \usepackage{url}
+ \usepackage[hidelinks]{hyperref}
+ \usepackage[nameinlink,capitalise,noabbrev]{cleveref}
++\makeatletter
++\@ifundefined{theHALG@line}
++  {\newcommand{\theHALG@line}{\thealgorithm.\arabic{ALG@line}}}
++  {\renewcommand{\theHALG@line}{\thealgorithm.\arabic{ALG@line}}}
++\makeatother
+ \crefname{assumption}{assumption}{assumptions}
+ \Crefname{assumption}{Assumption}{Assumptions}
++\graphicspath{{figures/}}
+ 
+ \onehalfspacing
+ \linenumbers
+@@ -74,9 +81,9 @@
+   \begin{figure}[!htbp]
+   \centering
+   \fbox{\parbox[c][0.24\textheight][c]{0.91\linewidth}{%
+-    \centering\textbf{Simulation/analysis output placeholder}\\[0.8em]
++    \centering\textbf{Planned real-data output}\\[0.8em]
+     #1\\[0.8em]
+-    \textit{Insert the final reproducible figure here after the code has been run.}}}
++    \textit{The PhysioNet analysis has not yet been run.}}}
+   \caption{#2}
+   \end{figure}}
+ 
+@@ -92,7 +99,7 @@
+ \maketitle
+ 
+ \begin{abstract}
+-Dynamic clinical early-warning systems repeatedly score the same patient, so a threshold with acceptable pointwise specificity can still generate an unacceptably large probability of at least one false alert during a complete monitoring episode. We propose PaFAR (Patient-level False-Alarm Risk calibration), a model-agnostic post-processing method that converts a locked sequence of risk scores into an online alerting rule with finite-sample patient-level error control. Each non-event calibration trajectory is reduced to the maximum of a prespecified score process, and an order-statistic threshold is computed across patients. Under class-conditional exchangeability of non-event patient trajectories, PaFAR controls the probability that a new non-event patient receives at least one alert. The result allows arbitrary within-patient serial dependence and irregular measurement patterns, as well as unequal monitoring lengths across patients. We also give a prespecified time-adaptive standardization, stratum-specific and target-site recalibration, and an optional high-confidence tolerance-limit version that controls the conditional deployment risk with confidence at least $1-\delta$. We establish the marginal and high-confidence guarantees, including tied scores and explicit minimum calibration sizes. A simulation program is specified at two levels: a fast dynamic score-process experiment and an end-to-end irregular-electronic-health-record experiment with XGBoost. A planned application uses the public PhysioNet/Computing in Cardiology Challenge 2019 sepsis data. Numerical result fields are left blank so that the manuscript can be populated directly from reproducible simulation and data-analysis code.
++Dynamic clinical early-warning systems repeatedly score the same patient, so a threshold with acceptable pointwise specificity can still produce an excessive probability of at least one false alert during a monitoring episode. We propose PaFAR (Patient-level False-Alarm Risk calibration), a model-agnostic post-processing method that converts a locked score trajectory into an online alerting rule with finite-sample patient-level error control. Each non-event calibration trajectory is reduced to the maximum of a prespecified score process, and an order-statistic threshold is computed across patients. Under class-conditional exchangeability of non-event trajectories, PaFAR controls the probability that a new non-event patient receives any alert while allowing arbitrary within-patient dependence, irregular measurement, and unequal monitoring lengths. We also develop prespecified time-adaptive standardization, target-site recalibration, and a high-confidence tolerance-limit version. Primary simulations comprised 2,250 replicates across a dynamic score-process experiment and an end-to-end irregular-EHR XGBoost experiment. PaFAR-F and PaFAR-T mean PFA closely tracked the finite-sample target, whereas pointwise-alpha thresholds produced patient-level PFA of approximately 0.43--0.62 at nominal $\alpha=0.10$. Under site shift, direct source transfer yielded PFA 0.280 and 0.136 in the two experiments; recalibrating only the scalar threshold with 500 target non-events restored PFA to approximately 0.100. PaFAR-HC was more conservative and kept conditional exceedance frequencies near $\delta=0.05$ in exchangeable score-process settings. Strict patient-level reliability reduced early sensitivity, revealing a reliability--efficiency trade-off rather than a failure of calibration. The PhysioNet 2019 analysis remains a planned application.
+ \end{abstract}
+ 
+ \noindent\textbf{Keywords:} conformal calibration; clinical early warning; false alarm; irregular longitudinal data; patient-level error control; sepsis; trustworthy artificial intelligence.
+@@ -101,7 +108,7 @@ Dynamic clinical early-warning systems repeatedly score the same patient, so a t
+ 
+ Clinical early-warning models repeatedly update a patient's risk as new electronic health record (EHR) information becomes available. In sepsis prediction, for example, a model may issue a score every hour using the current and past vital signs, laboratory measurements, missingness indicators, and demographic variables. The PhysioNet/Computing in Cardiology Challenge 2019 formalized this task through hourly predictions and a utility function that rewards timely warnings while penalizing missed events, late warnings, and false alarms \citep{reyna2019physionet,reyna2020early}. Prospective evaluations of machine-learning early-warning systems further show that deployment performance depends not only on discrimination but also on how alerts interact with clinical workflow \citep{adams2022prospective,henry2022factors}.
+ 
+-A central statistical mismatch remains. Most studies report AUROC, AUPRC, calibration of individual risk scores, or sensitivity and specificity at a pointwise threshold. Clinicians, however, experience a sequence of decisions for each patient. If a non-event patient is evaluated $K$ times and the false-positive probability were $p$ independently at each time, the probability of at least one false alert would be $1-(1-p)^K$. Independence is generally unrealistic, but the calculation illustrates the more general point: pointwise specificity does not determine episode-level reliability. Repeated low-value alerts increase workload and can undermine trust, while the operational definition and measurement of alert fatigue remain heterogeneous \citep{ray2026alert}. Recent clinical-AI work has therefore considered tiered thresholds and secondary filtering to improve alert precision \citep{wu2026tiered}. The distinction between a pointwise false-positive rate and the probability of at least one false alert under repeated monitoring is not itself new; the contribution here is a patient-trajectory calibration rule whose estimand, data split, finite-sample guarantee, and deployment interpretation are aligned with dynamic clinical alerting.
++A central statistical mismatch remains. Most studies report AUROC, PR-AUC, calibration of individual risk scores, or sensitivity and specificity at a pointwise threshold. Clinicians, however, experience a sequence of decisions for each patient. If a non-event patient is evaluated $K$ times and the false-positive probability were $p$ independently at each time, the probability of at least one false alert would be $1-(1-p)^K$. Independence is generally unrealistic, but the calculation illustrates the more general point: pointwise specificity does not determine episode-level reliability. Repeated low-value alerts increase workload and can undermine trust, while the operational definition and measurement of alert fatigue remain heterogeneous \citep{ray2026alert}. Recent clinical-AI work has therefore considered tiered thresholds and secondary filtering to improve alert precision \citep{wu2026tiered}. The distinction between a pointwise false-positive rate and the probability of at least one false alert under repeated monitoring is not itself new; the contribution here is a patient-trajectory calibration rule whose estimand, data split, finite-sample guarantee, and deployment interpretation are aligned with dynamic clinical alerting.
+ 
+ Conformal prediction provides finite-sample, distribution-free guarantees for black-box prediction procedures under exchangeability \citep{vovk2005algorithmic,lei2018distribution,angelopoulos2023gentle}. Related work has developed general risk control, sequential conformal inference, and simultaneous coverage for complete trajectories \citep{bates2021distribution,angelopoulos2024conformal,xu2023sequential,zhou2024conformalized}. Conformal methods have also been applied to sepsis prediction to reduce false positives or quantify uncertainty \citep{dalal2025timeseries}. These contributions do not directly answer the operational question studied here: how should one calibrate a dynamic supervised-learning system so that a complete non-event patient episode has probability at most $\alpha$ of receiving any alert? A recent online change-point method targets a related moving-window false-positive probability \citep{martin2026sequential}, but its monitoring problem and calibration mechanism differ from the labeled patient-trajectory setting considered here.
+ 
+@@ -112,7 +119,7 @@ The contributions are deliberately focused.
+     \item We define patient-level false-alarm probability as the primary reliability estimand for repeated clinical prediction and pair it with a clinically admissible early-warning sensitivity that does not reward arbitrarily premature alerts.
+     \item We give a patient-trajectory calibration rule with finite-sample class-conditional control under exchangeability across non-event patients, without requiring independence across decision times within a patient or equal trajectory lengths across patients.
+     \item We provide three simple extensions that preserve the same calibration logic: a prespecified time-adaptive boundary, stratum-specific or target-site recalibration, and a high-confidence nonparametric tolerance threshold.
+-    \item We specify a reproducible and computationally manageable simulation design, followed by a planned PhysioNet 2019 application comparing patient-level calibration with common pointwise and Bonferroni-style thresholds.
++    \item We evaluate the method in 2,250 completed primary Monte Carlo replicates spanning dynamic score processes and end-to-end irregular-EHR XGBoost pipelines. Patient-level PaFAR tracked its finite-sample target, pointwise calibration accumulated false alerts, and local scalar-threshold recalibration restored reliability under the simulated site shifts. A PhysioNet 2019 application remains planned.
+ \end{enumerate}
+ 
+ \begin{figure}[H]
+@@ -153,7 +160,7 @@ The contributions are deliberately focused.
+ \label{fig:pafar-workflow}
+ \end{figure}
+ 
+-The goal is not to claim that a trajectory maximum is a universally optimal alerting statistic. It is to provide a transparent reliability layer whose target, assumptions, finite-sample guarantee, implementation, and limitations can all be stated precisely. The remainder of the paper defines the estimands, presents the method and proofs, specifies the simulation design, and gives the real-data protocol.
++The goal is not to claim that a trajectory maximum is a universally optimal alerting statistic. It is to provide a transparent reliability layer whose target, assumptions, finite-sample guarantee, implementation, and limitations can all be stated precisely. The remainder of the paper defines the estimands, presents the method and proofs, reports the simulation design and primary results, and gives the planned real-data protocol.
+ \section{Problem formulation}\label{sec:formulation}
+ 
+ \subsection{Patient trajectories and available information}
+@@ -276,7 +283,7 @@ The lead-specific positive predictive value is
+ \end{equation}
+ Thus an event patient whose first alert occurs before the six-hour prediction window is counted as premature rather than as a valid detection. In the main tables, the unqualified ``PPV'' denotes $\operatorname{PPV}_3$, aligned with the primary three-hour-lead sensitivity; $\operatorname{PPV}_0$ is reported as a supplementary sensitivity measure. The estimands deliberately have different denominators: patient PFA uses all non-event patients in the analysis cohort; $\Sens_{\ell}$ uses only event patients with $\calW_{i,\ell}\ne\varnothing$; and $\operatorname{PPV}_{\ell}$ conditions on every patient who receives a formal first alert. Consequently, an event patient with a premature alert, or an event patient who is not evaluable for $\Sens_{\ell}$, remains in the PPV and alert-burden population but does not contribute a valid-detection numerator.
+ 
+-Secondary summaries include median lead time among detections counted by $\Sens_0$, alert episodes per 100 patient-days, the cumulative probability of a first false alert by elapsed time, weighted AUC-PR, AUROC, and the official PhysioNet utility. Threshold-free metrics describe the score generator; equations~\eqref{eq:pfa}--\eqref{eq:lead-ppv} describe the deployed alert policy.
++Secondary summaries include median lead time among detections counted by $\Sens_0$, alert episodes per 100 patient-days, the cumulative probability of a first false alert by elapsed time, weighted trapezoidal PR-AUC, AUROC, and the official PhysioNet utility. Threshold-free metrics describe the score generator; equations~\eqref{eq:pfa}--\eqref{eq:lead-ppv} describe the deployed alert policy.
+ 
+ \subsection{Patient-level data separation}
+ 
+@@ -612,7 +619,7 @@ The three-score causal average in \eqref{eq:smooth-score} is fixed as the primar
+ 
+ The simulation has two complementary components. Experiment I directly generates score trajectories and changes one mechanism at a time for precise evaluation of finite-sample calibration. Experiment II generates irregular longitudinal biomarkers, constructs causal features, refits XGBoost, and then applies the same calibration procedures in a small number of deliberately bundled end-to-end stress tests. The design avoids a large factorial crossing of every parameter. This keeps the computation feasible while separating mechanism checks from realistic pipeline checks.
+ 
+-The common primary values are $\alpha=0.10$, $\delta=0.05$, event prevalence $\pi=0.10$, burn-in $t_{\min}=6$, maximum monitoring time $H_{\max}=120$ hours in simulation, and admissible early-warning window $W_{\max}=h=6$ hours. The main sensitivity analysis uses $\alpha=0.05$. Unless dependence is stated explicitly, all patient-level variables, innovation sequences, and patients are mutually independent.
++The common primary values are $\alpha=0.10$, $\delta=0.05$, event prevalence $\pi=0.10$, burn-in $t_{\min}=6$, maximum monitoring time $H_{\max}=120$ hours in simulation, and admissible early-warning window $W_{\max}=h=6$ hours. Within every primary replicate, the prespecified reliability grid $\alpha\in\{0.02,0.05,0.10,0.15,0.20\}$ reuses the same trajectories, learner, validation-fitted template, calibration sample, test sample, and seed record; only the threshold is recomputed. Thus the reliability curves do not regenerate patients for different values of $\alpha$. The main tables use $\alpha=0.10$. The weak-signal, calibration-size, and raw-score analyses remain separate planned one-factor sensitivity analyses and are not included in the present results. Unless dependence is stated explicitly, all patient-level variables, innovation sequences, and patients are mutually independent.
+ 
+ \subsection{Experiment I: dynamic score-process simulation}\label{subsec:sim-score}
+ 
+@@ -704,7 +711,7 @@ S4: site shift & A as source; B shifted by \eqref{eq:site-shift-score} & B has m
+ \end{tabularx}
+ \end{table}
+ 
+-For S1--S3, class-specific samples are generated conditionally on $D_i=0$ or $D_i=1$: each replicate uses 500 independent validation non-events to estimate the PaFAR-T template, $m_0=500$ calibration non-events, 5,000 test non-events, and 2,000 test event patients. The prevalence $\pi$ is used only to standardize prevalence-dependent summaries in this experiment. The primary conditions are repeated 500 times. For $m_0=500$ and $\alpha=0.10$, the implementation must record $k_{\alpha}=451$ and the exact finite-sample marginal bound $\alpha_{m_0}=(501-451)/501=50/501\approx0.09980$; the expected PaFAR PFA is compared with this discrete bound rather than being required to equal $0.10$ exactly. Calibration-size sensitivity uses $m_0\in\{100,250,1000\}$ in S2 and S3 with 250 replicates per condition. The $\alpha=0.05$ and weak-signal analyses also use 250 replicates.
++For S1--S3, class-specific samples are generated conditionally on $D_i=0$ or $D_i=1$: each replicate uses 500 independent validation non-events to estimate the PaFAR-T template, $m_0=500$ calibration non-events, 5,000 test non-events, and 2,000 test event patients. The prevalence $\pi$ is used only to standardize prevalence-dependent summaries in this experiment. Each primary scenario is repeated 500 times, and all five $\alpha$ operating points are computed from each completed primary replicate. For $m_0=500$ and $\alpha=0.10$, the implementation records $k_{\alpha}=451$ and the exact finite-sample marginal bound $\alpha_{m_0}=(501-451)/501=50/501\approx0.09980$; the expected PaFAR PFA is compared with this discrete bound rather than being required to equal $0.10$ exactly. The prespecified calibration-size analysis with $m_0\in\{100,250,1000\}$ in S2 and S3 and the weak-signal analysis remain planned one-factor sensitivities; they were not run for this primary report.
+ 
+ For S4, the template and source threshold are estimated from 500 validation non-events and 500 calibration non-events generated at site A. Direct transfer uses the source threshold at site B. Within each replicate, one independent reservoir of 500 target-site non-events is generated and put in a seed-fixed random order. Local recalibration uses the nested prefixes of sizes $m_{0B}\in\{100,250,500\}$ while keeping the score transformation and source-fitted template fixed. Each target strategy is evaluated on the same independent 5,000 target non-events and 2,000 target event patients within a replicate, over 500 replicates.
+ 
+@@ -793,7 +800,7 @@ E3 & moderate, informative & source A to shifted target B & Direct transfer vers
+ \end{tabularx}
+ \end{table}
+ 
+-For E1 and E2, each replicate uses $n_{\mathrm{tr}}=1500$, $n_{\mathrm{val}}=500$, $n_{\mathrm{cal}}=600$, and $n_{\mathrm{te}}=1500$ patients. The primary $\alpha=0.10$ conditions use 100 replicates. The $\alpha=0.05$ and weak-signal analyses use 50 replicates. For E3, source site A uses the same training, validation, and calibration sample sizes, and the source threshold is computed from its non-event calibration patients. Within each replicate, one independent reservoir of 500 target-site non-events is generated and put in a seed-fixed random order; target-site recalibration uses its nested prefixes of sizes $m_{0B}\in\{100,250,500\}$. All strategies are evaluated on the same separate 2,000 independent target patients. E3 uses 50 replicates.
++For E1 and E2, each replicate uses $n_{\mathrm{tr}}=1500$, $n_{\mathrm{val}}=500$, $n_{\mathrm{cal}}=600$, and $n_{\mathrm{te}}=1500$ patients. Each scenario uses 100 primary replicates, with all five $\alpha$ operating points computed from the same fitted learner and patient samples within a replicate. For E3, source site A uses the same training, validation, and calibration sample sizes, and the source threshold is computed from its non-event calibration patients. Within each replicate, one independent reservoir of 500 target-site non-events is generated and put in a seed-fixed random order; target-site recalibration uses its nested prefixes of sizes $m_{0B}\in\{100,250,500\}$. All strategies are evaluated on the same separate 2,000 independent target patients. E3 uses 50 primary replicates. The weak-signal and other one-factor sensitivity analyses were not run.
+ 
+ \subsection{Compared alerting rules}\label{subsec:comparators}
+ 
+@@ -845,7 +852,7 @@ Let $N_i(c)$ be the alert-episode count defined after \eqref{eq:first-alert}, an
+ {(1-\pi)\mu_{E,0}+\pi\mu_{E,1}}.
+ \label{eq:standardized-alert-burden}
+ \end{equation}
+-Experiment II is generated at $\pi=0.10$; the same standardized formulas are used for consistency, with empirical class-conditional means substituted into \eqref{eq:standardized-ppv}--\eqref{eq:standardized-alert-burden}. The $\pi=0.05$ sensitivity analysis changes only prevalence-standardized PPV and alert burden; it does not change thresholds, PFA, class-conditional sensitivity, or threshold-free discrimination. Threshold-free weighted AUC-PR and AUROC are computed from the common smoothed base score $\widetilde R_i(t)$ and reported once per score generator and scenario. They are not recomputed from the time-standardized PaFAR-T score, so they remain identical across thresholding rules applied to the same locked learner.
++Experiment II is generated at $\pi=0.10$; the same standardized formulas are used for consistency, with empirical class-conditional means substituted into \eqref{eq:standardized-ppv}--\eqref{eq:standardized-alert-burden}. The planned $\pi=0.05$ sensitivity analysis would change only prevalence-standardized PPV and alert burden; it would not change thresholds, PFA, class-conditional sensitivity, or threshold-free discrimination. Threshold-free weighted trapezoidal PR-AUC and AUROC are computed from the common smoothed base score $\widetilde R_i(t)$ and reported once per score generator and scenario. They are not recomputed from the time-standardized PaFAR-T score, so they remain identical across thresholding rules applied to the same locked learner.
+ 
+ Methods are evaluated on the same test patients within each replicate. A Monte Carlo standard error is the across-replicate standard deviation divided by the square root of the number of defined replicate estimates. For each $m_0$, results record the finite-sample reference level
+ \[
+@@ -858,97 +865,82 @@ The code applies the following conventions before any Monte Carlo aggregation. I
+ 
+ The compact manuscript tables display representative methods. The implementation nevertheless writes a complete long-format result file containing every prespecified method, scenario, operating point, denominator count, failure flag, and uncertainty summary before the selected rows are rendered into the manuscript.
+ 
+-\subsection{Planned simulation outputs}
++\subsection{Primary simulation results}
+ 
+-\begin{table}[!htbp]
++\subsubsection{Patient-level marginal reliability}
++
++At $\alpha=0.10$, mean PaFAR-F PFA was 0.099, 0.099, 0.101, 0.098, and 0.101 in S1, S2, S3, E1, and E2, respectively. These values closely tracked the corresponding mean finite-sample levels $\alpha_{m_0}$ (approximately 0.100 in Experiment I and 0.099 in Experiment II). PaFAR-T was similarly calibrated, with mean PFA 0.101 in S3, 0.100 in E1, and 0.098 in E2. The naive-maximum comparator was numerically close to PaFAR-F in these simulations, but it omits the $m_0+1$ finite-sample correction and therefore does not inherit Theorem~\ref{thm:marginal}.
++
++In contrast, pointwise-alpha calibration accumulated false alerts over repeated monitoring. At the same nominal level, its patient-level PFA was 0.431 in S1, 0.474 in S2, 0.481 in S3, 0.615 in E1, and 0.595 in E2. Binwise Bonferroni and PaFAR-HC were more conservative than PaFAR-F. Table~\ref{tab:exp1-primary} gives the primary Experiment I operating summaries. Figure~\ref{fig:pfa-cumulative} shows when false alerts accumulated, and Figure~\ref{fig:pfa-reliability} compares realized PFA across the common five-level alpha grid.
++
++\input{generated_tables/table3_experiment1.tex}
++
++\begin{figure}[tbp]
+ \centering
+-\caption{Experiment I primary results at $\alpha=0.10$ and $m_0=500$. Entries are Monte Carlo means with Monte Carlo standard errors in parentheses. $^{\dagger}$Longest-quartile PFA is descriptive and is not a separately guaranteed target.}
+-\label{tab:sim-score-primary}
+-\small
+-\setlength{\tabcolsep}{4pt}
+-\begin{tabular}{llcccccc}
+-\toprule
+-Scenario & Method & PFA & Long-stay PFA$^{\dagger}$ & Sens$_3$ & Sens$_0$ & Premature & Alerts/100 d \\
+-\midrule
+-S1 & Pointwise-$\alpha$ & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S1 & Bonferroni & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S1 & PaFAR-F & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S1 & PaFAR-HC & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-\addlinespace
+-S2 & Pointwise-$\alpha$ & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S2 & Bonferroni & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S2 & PaFAR-F & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S2 & PaFAR-HC & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-\addlinespace
+-S3 & Pointwise-$\alpha$ & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S3 & PaFAR-F & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S3 & PaFAR-T & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-S3 & PaFAR-HC & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-\bottomrule
+-\end{tabular}
+-\end{table}
++\includegraphics[width=\textwidth]{figure2_cumulative_false_alert.pdf}
++\caption{Mean cumulative probability of a first false alert by elapsed monitoring hour at $\alpha=0.10$. Curves use only methods defined for each displayed primary scenario.}
++\label{fig:pfa-cumulative}
++\end{figure}
+ 
+-\begin{table}[!htbp]
++\begin{figure}[tbp]
+ \centering
+-\caption{Experiment II end-to-end XGBoost results at $\alpha=0.10$. Threshold-free learner metrics are reported once per scenario in a separate supplementary table.}
+-\label{tab:sim-ehr-primary}
+-\small
+-\setlength{\tabcolsep}{4pt}
+-\begin{tabular}{llcccccc}
+-\toprule
+-Scenario & Method & PFA & Sens$_3$ & Premature & Median lead & PPV & Threshold SD \\
+-\midrule
+-E1 & Youden & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-E1 & Pointwise-$\alpha$ & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-E1 & PaFAR-F & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-E1 & PaFAR-T & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-\addlinespace
+-E2 & Pointwise-$\alpha$ & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-E2 & PaFAR-F & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-E2 & PaFAR-T & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-E2 & PaFAR-HC & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell & \resultcell \\
+-\bottomrule
+-\end{tabular}
+-\end{table}
++\includegraphics[width=\textwidth]{figure3_pfa_reliability.pdf}
++\caption{Mean patient-level PFA over the prespecified reliability grid. The five operating points within a scenario reuse the same primary replicate data and differ only in the recomputed threshold.}
++\label{fig:pfa-reliability}
++\end{figure}
+ 
+-\begin{table}[!htbp]
++\subsubsection{End-to-end irregular-EHR performance}
++
++The locked XGBoost learner had mean AUROC 0.716 and trapezoidal PR-AUC 0.097 in E1 and mean AUROC 0.707 and trapezoidal PR-AUC 0.096 in E2; no learner fit failed. These threshold-free measures describe hour-level score discrimination and are not PaFAR operating metrics. Fixed 0.5 produced patient-level PFA 0.751 and 0.733 in E1 and E2, while Youden produced 0.876 and 0.868. Pointwise-alpha PFA remained high at 0.615 and 0.595. PaFAR-F reduced these values to 0.098 and 0.101, but its mean $\Sens_3$ was 0.035 and 0.038. Table~\ref{tab:exp2-primary} reports the selected end-to-end operating summaries; learner metrics are reported once per fitted score generator in Table~\ref{tab:learner-metrics}.
++
++\input{generated_tables/table4_experiment2.tex}
++
++\subsubsection{Time-adaptive standardization}
++
++In S3, where elapsed-time drift was explicit, PaFAR-T reduced descriptive long-stay PFA from 0.181 for PaFAR-F to 0.146 while leaving overall PFA essentially unchanged (0.101 for both after rounding). Mean $\Sens_3$ increased from 0.179 to 0.183. The paired PaFAR-T-minus-PaFAR-F difference in long-stay PFA was $-0.0348$ with paired Monte Carlo SE 0.0008, whereas the overall-PFA difference was 0.0002 with paired Monte Carlo SE 0.0004.
++
++This pattern did not generalize to the learned-score settings. In E1/E2, PaFAR-T had slightly lower $\Sens_3$ than PaFAR-F (0.030 versus 0.035 and 0.031 versus 0.038) and higher descriptive long-stay PFA (0.186 versus 0.104 and 0.172 versus 0.107). XGBoost already used elapsed time, measurement counts, and missingness features, which may have absorbed part of the time structure. Thus the prespecified time template changes efficiency but is not uniformly efficiency-improving; PaFAR-F or PaFAR-T must be chosen before test outcomes are examined. Figure~\ref{fig:sens-pfa-tradeoff} displays the corresponding PFA--$\Sens_3$ operating points.
++
++\begin{figure}[tbp]
+ \centering
+-\caption{Target-site shift in Experiments I and II.}
+-\label{tab:sim-site-shift}
+-\scriptsize
+-\setlength{\tabcolsep}{3pt}
+-\begin{tabularx}{\linewidth}{@{}L{0.10\linewidth}Yccccc@{}}
+-\toprule
+-Experiment & Strategy & Target $m_0$ & Target PFA & Sens$_3$ & PPV & Threshold \\
+-\midrule
+-I & Direct source transfer & 0 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-I & Local PaFAR-F & 100 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-I & Local PaFAR-F & 250 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-I & Local PaFAR-F & 500 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-I & Local PaFAR-T (source template) & 500 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-I & Local PaFAR-HC & 500 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-\addlinespace
+-II & Direct source transfer & 0 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-II & Local PaFAR-F & 100 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-II & Local PaFAR-F & 250 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-II & Local PaFAR-F & 500 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-II & Local PaFAR-T (source template) & 500 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-II & Local PaFAR-HC & 500 & \resultcell & \resultcell & \resultcell & \resultcell \\
+-\bottomrule
+-\end{tabularx}
+-\end{table}
++\includegraphics[width=\textwidth]{figure4_sens3_vs_pfa.pdf}
++\caption{Mean $\Sens_3$ versus realized patient-level PFA at $\alpha=0.05$ and $0.10$. Marker shape distinguishes the two operating levels, and thin lines connect operating points for the same method.}
++\label{fig:sens-pfa-tradeoff}
++\end{figure}
+ 
+-\placeholderfigure{Plot the cumulative proportion of non-event patients with a first false alert by elapsed monitoring hour for pointwise calibration, Bonferroni conformal, PaFAR-F, PaFAR-T, and PaFAR-HC.}{Cumulative patient-level false-alert probability over elapsed monitoring time.}
++\subsubsection{High-confidence conditional control}
+ 
+-\placeholderfigure{Plot realized patient-level PFA against nominal $\alpha\in\{0.02,0.05,0.10,0.15,0.20\}$ with the identity line.}{Patient-level reliability of dynamic alert thresholds.}
++At $\alpha=0.10$ and $\delta=0.05$, the fraction of PaFAR-HC calibration replicates whose independent-oracle conditional PFA exceeded $\alpha$ was 0.040 in S1, 0.032 in S2, and 0.048 in S3. Combining the prespecified target-calibration sizes, the corresponding frequency for local S4 PaFAR-HC was 0.038. These frequencies are consistent with the tolerance-limit guarantee and were accompanied by lower sensitivity than PaFAR-F. By contrast, transferring the source S4 PaFAR-HC threshold unchanged yielded an exceedance frequency of 1.000 at $\alpha=0.10$. That source threshold is not protected after the target distribution changes; its failure is therefore not a counterexample to Theorem~\ref{thm:hc}. Figure~\ref{fig:conditional-pfa} uses the independent Experiment I oracle to show the distribution of conditional PFA, with local S4 methods fixed at target $m_0=500$.
++
++\begin{figure}[tbp]
++\centering
++\includegraphics[width=\textwidth]{figure5_conditional_pfa.pdf}
++\caption{Independent-oracle conditional PFA at $\alpha=0.10$. Panel A compares PaFAR-F and PaFAR-HC in exchangeable Experiment I settings; Panel B contrasts source transfer with local S4 recalibration at target $m_0=500$. The dashed line is 0.10.}
++\label{fig:conditional-pfa}
++\end{figure}
++
++\subsubsection{Target-site recalibration}
++
++Direct source transfer was unreliable under both simulated site shifts. Its target PFA was 0.280 in S4 and 0.136 in E3. Re-estimating only the scalar PaFAR-F threshold from 500 target non-events reduced PFA to 0.100 in each experiment. The paired local-minus-direct PFA differences were $-0.1802$ (paired Monte Carlo SE 0.0013) in S4 and $-0.0363$ (paired Monte Carlo SE 0.0035) in E3. The apparently higher $\Sens_3$ of direct transfer accompanied excess false-alert risk and is not an efficiency advantage at equal reliability. The learner and source-fitted time template remained frozen during local recalibration; increasing target $m_0$ primarily reduced threshold variability rather than changing the method. Table~\ref{tab:target-recalibration} and Figure~\ref{fig:target-recalibration} summarize these results.
++
++\input{generated_tables/table5_target_shift.tex}
++
++\begin{figure}[tbp]
++\centering
++\includegraphics[width=\textwidth]{figure6_target_recalibration.pdf}
++\caption{Target PFA and mean $\Sens_3$ before and after local scalar-threshold recalibration. Direct source transfer is the $m_0=0$ reference; local PaFAR-F, PaFAR-T, and PaFAR-HC use nested target non-event prefixes.}
++\label{fig:target-recalibration}
++\end{figure}
+ 
+-\placeholderfigure{Plot three-hour-lead sensitivity $\Sens_3$ against realized patient-level PFA and mark the operating points at $\alpha=0.05$ and $0.10$.}{Early-detection and patient-level false-alarm trade-off.}
++\subsubsection{Reliability--efficiency trade-off}
+ 
+-\placeholderfigure{Across calibration replicates, compare the distribution of conditional deployment PFA for PaFAR-F and PaFAR-HC, with vertical line at $\alpha$.}{Marginal validity and high-confidence conditional control.}
++In the end-to-end simulations, PaFAR-F operated near patient PFA 0.10 but mean $\Sens_3$ was only 0.035 in E1, 0.038 in E2, and 0.041 after local E3 recalibration with $m_0=500$. E3 learner AUROC was 0.723 and trapezoidal PR-AUC was 0.105, yet a trajectory-maximum threshold is more stringent than hour-level discrimination. PaFAR cannot create signal absent from the learner. The low early sensitivity therefore quantifies a substantive reliability--efficiency cost under strict episode-level control, not a failure of the calibration theorem.
+ 
+-\placeholderfigure{Plot target-site PFA and three-hour-lead sensitivity $\Sens_3$ against the number of target non-event calibration patients, with direct source transfer as a reference.}{Effect of target-site recalibration under distribution shift.}
++\FloatBarrier
+ \section{Planned PhysioNet 2019 analysis}\label{sec:realdata}
+ 
++The real-data analysis is specified here as the next application and is not included in the present simulation results.
++
+ \subsection{Data source and target task}
+ 
+ The application uses the public training component of the PhysioNet/Computing in Cardiology Challenge 2019 \citep{reyna2019physionet,reyna2020early}. It contains 40,336 ICU patient records from two public hospital-system data sets: 20,336 in set A and 20,000 in set B. Each patient file is organized on an hourly grid and contains 40 predictor variables---vital signs, laboratory measurements, demographics, hospital-admission timing, and ICU length of stay---plus the shifted \texttt{SepsisLabel}. Although the decision grid is hourly, most clinical variables are measured irregularly and contain substantial missingness.
+@@ -984,11 +976,11 @@ External-style analyses are run in both directions, A$\rightarrow$B and B$\right
+     \item \textbf{Direct transfer}: apply the source patient-level threshold unchanged at the target hospital.
+     \item \textbf{Local recalibration}: keep the source learner, feature map, smoother, and PaFAR-T template fixed, and recompute only the scalar patient-level threshold using $m_{0B}\in\{100,250,500,1000\}$ historical target-hospital non-event patients.
+ \end{enumerate}
+-One prespecified target partition defines the primary analysis: 50\% of target patients form a test set stratified by event status and the remaining 50\% form a calibration reservoir. The target non-event calibration samples of sizes $100$, $250$, $500$, and $1000$ are nested draws from that reservoir; reservoir event patients are unused. Direct transfer and every local-recalibration strategy are evaluated on the same primary target test patients, and the fixed source model is not refitted. Forty-nine additional prespecified target partitions repeat this allocation only to assess split sensitivity. Their overlapping results are summarized by the median, interquartile range, minimum, and maximum and are not treated as independent replications for standard errors or confidence intervals. Target event patients are never used to compute the false-alarm threshold.
++One prespecified target partition defines the primary analysis: 50\% of target patients form a test set stratified by event status and the remaining 50\% form a calibration reservoir. The target non-event calibration samples of sizes $100$, $250$, $500$, and $1000$ are nested draws from that reservoir; reservoir event patients are unused. Direct transfer and every local-recalibration strategy are evaluated on the same primary target test patients, and the fixed source model is not refitted. Forty-nine additional prespecified target partitions repeat this allocation only to assess split sensitivity. Their overlapping results are summarized by the median, interquartile range, minimum, and maximum and are not treated as independent replications for standard errors or inferential intervals. Target event patients are never used to compute the false-alarm threshold.
+ 
+ \subsection{Outcomes and uncertainty summaries}
+ 
+-The primary test outcome is the proportion of non-event patients receiving at least one formal alert. In the hospital-specific internal analysis, each hospital's PFA is accompanied by a two-sided 95\% exact binomial interval and a one-sided 95\% exact upper bound. The overall PFA is the observed-hospital-mixture weighted average of the two hospital-specific proportions and receives a stratified patient-bootstrap interval rather than a homogeneous-binomial interval. In each cross-hospital target analysis, which contains one target hospital, the corresponding exact binomial intervals are reported. These intervals describe realized test performance; they are not substituted for the finite-sample calibration theorem. The main detection outcome is $\Sens_3$, followed by $\Sens_0$. Secondary outcomes are premature-alert probability, median valid lead time, PPV, alerts per 100 patient-days, weighted AUC-PR, AUROC, and the official challenge utility.
++The primary test outcome is the proportion of non-event patients receiving at least one formal alert. In the hospital-specific internal analysis, each hospital's PFA is accompanied by a two-sided 95\% exact binomial interval and a one-sided 95\% exact upper bound. The overall PFA is the observed-hospital-mixture weighted average of the two hospital-specific proportions and receives a stratified patient-bootstrap interval rather than a homogeneous-binomial interval. In each cross-hospital target analysis, which contains one target hospital, the corresponding exact binomial intervals are reported. These intervals describe realized test performance; they are not substituted for the finite-sample calibration theorem. The main detection outcome is $\Sens_3$, followed by $\Sens_0$. Secondary outcomes are premature-alert probability, median valid lead time, PPV, alerts per 100 patient-days, weighted trapezoidal PR-AUC, AUROC, and the official challenge utility.
+ 
+ The challenge utility is an auxiliary benchmark and is not used for learner or threshold selection. Define the utility evaluation grid
+ \[
+@@ -1071,21 +1063,23 @@ B$\rightarrow$A & Local PaFAR-HC & 500 & \resultcell & \resultcell & \resultcell
+ 
+ \section{Discussion}\label{sec:discussion}
+ 
+-PaFAR changes the reliability unit from an individual prediction time to a complete patient monitoring episode. This is clinically relevant because a care team experiences the cumulative consequence of repeated decisions. By reducing each non-event trajectory to its maximum fixed score, the method converts a dependent, variable-length sequence into one exchangeable scalar per patient. The resulting rank proof is elementary, but the guarantee directly matches the event of operational interest: whether a non-event patient receives any false alert.
++PaFAR changes the reliability unit from an individual prediction time to a complete patient monitoring episode. The completed primary simulations supported the finite-sample marginal statement in its intended exchangeable settings: PaFAR-F and PaFAR-T mean PFA closely tracked $\alpha_{m_0}$ across the five-level reliability grid. This contrasts with pointwise-alpha calibration, whose patient-level PFA at nominal 0.10 ranged from approximately 0.43 to 0.62. The cumulative-alert curves make the operational distinction concrete: pointwise specificity did not prevent false alerts from accumulating over a trajectory.
++
++The method is intentionally model agnostic and does not improve score discrimination. The end-to-end learners achieved AUROC approximately 0.71--0.72, but strict trajectory-maximum calibration left mean $\Sens_3$ near 0.03--0.04 in E1--E3. A more informative learner may preserve more early sensitivity at the same PFA, but PaFAR cannot create signal that the learner does not contain. The observed loss is therefore a substantive reliability--efficiency trade-off. It should not be described as evidence of high clinical sensitivity or as a failure of the calibration theorem.
+ 
+-The method is intentionally model agnostic. A more flexible learner may improve early detection, but it does not remove the need to calibrate the deployed alert policy. Conversely, PaFAR cannot create signal that the base model does not contain. The principal empirical question is therefore a constrained trade-off: how much clinically admissible early sensitivity remains after patient-level false-alarm risk is limited to a prespecified value? A low sensitivity at $\alpha=0.05$ would be a scientifically meaningful negative finding rather than a failure of the calibration theorem.
++PaFAR-HC addressed a different target from marginal PaFAR. In the exchangeable score-process scenarios, its independent-oracle conditional exceedance frequency at $\delta=0.05$ was close to the prespecified level, but the resulting thresholds were more conservative and sensitivity was lower. The marginal and tolerance-limit guarantees should therefore not be treated as synonyms. They answer different deployment questions and impose different efficiency costs.
+ 
+-PaFAR-T separates efficiency modeling from validity calibration. The elapsed-time template is learned on validation non-events and then frozen. Final validity still comes from the independent calibration maxima. This construction allows a simple time-varying boundary without fitting a parametric serial-dependence model or searching the final calibration set for a favorable threshold.
++The time-adaptive result was similarly qualified. PaFAR-T reduced the long-stay PFA imbalance in S3 without materially changing overall PFA and slightly increased $\Sens_3$. It did not improve efficiency in E1 or E2, where $\Sens_3$ was slightly lower and descriptive long-stay PFA was higher than for PaFAR-F. The EHR learner already incorporated elapsed time, measurement counts, and missingness features. The fixed and time-adaptive score definitions must consequently be prespecified rather than selected after observing test performance.
+ 
+-The distinction between marginal and high-confidence guarantees is also important. Standard PaFAR gives finite-sample marginal control under patient-level exchangeability; the rank bound is attained under continuous scores and can be conservative when scores are tied. PaFAR-HC adds a nonparametric tolerance statement about the realized threshold, but requires an i.i.d. calibration sample and is more conservative. The manuscript reports both statements without treating them as interchangeable.
++Distribution shift exposed the boundary of the theory. Direct source-threshold transfer yielded PFA 0.280 in S4 and 0.136 in E3, whereas local target-site recalibration of the scalar threshold restored PFA to approximately 0.10. The higher sensitivity under direct transfer occurred at substantially greater false-alert risk and was not an equal-reliability advantage. Theorems~\ref{thm:marginal}--\ref{thm:hc} apply only under their stated exchangeability or i.i.d. conditions; source-transfer failure after a distribution change does not contradict them.
+ 
+-Several limitations remain. Exchangeability may fail under hospital shift, temporal drift, changed measurement policies, or model-driven clinical interventions. Target-site recalibration is valid only when local calibration patients represent future target patients. The guarantee is conditional on the recorded non-event label, so undetected events and label error change the target population. Retrospective evaluation cannot capture alert-induced changes in testing, treatment, discharge, or event ascertainment. Marginal control also does not imply equal subgroup control. Duration heterogeneity may yield a higher conditional false-alert probability among long episodes, while a single globally calibrated threshold can reduce sensitivity among shorter episodes. The prespecified cap, the descriptive duration analyses, the time-adaptive boundary, and hospital-specific calibration address selected aspects of this heterogeneity but do not provide duration-conditional control.
++Several limitations remain. Exchangeability may fail under hospital shift, temporal drift, changed measurement policies, or model-driven clinical interventions. Target-site recalibration is valid only when local calibration patients represent future target patients. The guarantee is conditional on the recorded non-event label, so undetected events and label error change the target population. Retrospective evaluation cannot capture alert-induced changes in testing, treatment, discharge, or event ascertainment. Marginal control also does not imply equal subgroup control. Duration heterogeneity may yield a higher conditional false-alert probability among long episodes, while a single globally calibrated threshold can reduce sensitivity among shorter episodes. The prespecified cap, descriptive duration analyses, time-adaptive boundary, and hospital-specific calibration address selected aspects of this heterogeneity but do not provide duration-conditional control.
+ 
+-The contribution should therefore be stated narrowly. The paper does not claim the first use of conformal prediction in sepsis or the first simultaneous analysis of trajectories. It proposes a transparent patient-trajectory calibration target, proves its finite-sample properties, and evaluates whether that target is practically attainable in dynamic clinical early warning.
++The contribution should therefore be stated narrowly. The simulations establish computational feasibility and clarify reliability behavior under controlled mechanisms, but they do not demonstrate real-world effectiveness. Clinical usefulness still requires the planned PhysioNet analysis, careful label and subgroup audits, and prospective evaluation under intervention feedback.
+ 
+ \section{Conclusion}
+ 
+-PaFAR is a lightweight calibration layer for converting repeated black-box risk scores into a patient-level false-alarm-controlled alerting rule. Its main guarantee requires exchangeability across non-event patient trajectories and allows arbitrary dependence and irregularity within a patient. The theory gives explicit finite-sample guarantees, and the simulation design specifies the distributions, parameters, comparators, sample sizes, and outputs needed for implementation, subject only to prespecified smoke-test checks for numerical degeneracy. The remaining work is computational: execute the simulation and PhysioNet pipelines, populate the reserved tables and figures, and revise the empirical discussion according to the observed results.
++PaFAR is a lightweight patient-trajectory reliability layer for repeated black-box scores. The primary simulations supported its finite-sample marginal control under exchangeability and showed that pointwise calibration can produce severe patient-level false-alert accumulation. The high-confidence threshold reduced conditional exceedance probability but was more conservative. Under simulated site shift, direct source-threshold transfer failed, whereas local recalibration of the scalar threshold restored patient-level PFA to approximately the target without refitting the learner. Strict control could substantially reduce early sensitivity, so reliability and detection efficiency must be reported together. These results do not imply that PaFAR improves discrimination, that PaFAR-T uniformly improves efficiency, or that the method has been clinically validated. The planned PhysioNet analysis and subsequent prospective evaluation remain the next empirical steps.
+ \appendix
+ 
+ \section{Proofs}\label{app:proofs}
+@@ -1252,7 +1246,7 @@ Component & Primary value & Sensitivity values or notes \\
+ Component & Primary value & Sensitivity values or notes \\
+ \midrule
+ \endhead
+-Target patient PFA & $\alpha=0.10$ & $0.05$ primary sensitivity; $0.02,0.15,0.20$ only for reliability curves. \\
++Target patient PFA & $\alpha=0.10$ & Reliability grid $0.02,0.05,0.10,0.15,0.20$ within each shared primary replicate; thresholds only are recomputed. \\
+ HC confidence & $\delta=0.05$ & $0.10$ optional sensitivity. \\
+ Score-process calibration non-events & $m_0=500$ & $100,250,1000$ in S2 and S3. \\
+ Event prevalence & $\pi=0.10$ & $0.05$ obtained only by reweighting PPV and alert burden; class-conditional metrics and thresholds are unchanged. \\
+@@ -1276,8 +1270,8 @@ Number of biomarkers & $p=12$ & First eight have nonzero dynamic-severity loadin
+ Observation mechanism & E1 moderate/noninformative; E2 sparse/informative & Defined exactly in \eqref{eq:obs-dgp}. \\
+ EHR site shift & E3: biomarker offset 0.20, noise multiplier 1.10 & Observation-logit shifts $+0.10$ for vitals and $-0.10$ for laboratories. \\
+ Experiment II XGBoost & depth 3, eta 0.05, child weight 5 & Subsample and column fraction 0.80; early stopping selects rounds. \\
+-Experiment I replications & 500 primary & 250 for one-factor sensitivity analyses. \\
+-Experiment II replications & 100 for E1--E2 & 50 for sensitivities and E3. \\
++Experiment I replications & 500 each for S1--S4 & One-factor sensitivity analyses remain planned and were not run. \\
++Experiment II replications & 100 each for E1--E2; 50 for E3 & One-factor sensitivity analyses remain planned and were not run. \\
+ Oracle/reference sample & $10^6$ fixed-boundary non-event trajectories & Independent for each Experiment I scenario; no precomputed Oracle-T maxima. \\
+ \bottomrule
+ \end{longtable}
+@@ -1299,12 +1293,39 @@ The simulation and data-analysis code should record the following items.
+     \item A simulation unit test comparing the empirical exchangeable-rank error with $(m_0+1-k_{\alpha})/(m_0+1)$ under continuous and tied scores; for $m_0=500$ and $\alpha=0.10$, the expected reference is $50/501$.
+     \item Stable computation of the PaFAR-HC index using a binomial survival function or log-tail routine rather than direct large-binomial summation.
+     \item Explicit records of infinite thresholds, undefined PPV or lead time, empty sensitivity denominators, and learner-fitting failures, with no silent conversion of \texttt{NA} to zero and no silent replicate regeneration.
+-    \item Eligible exposure $E_i$, alert episodes, patient-level confidence intervals, stratified bootstrap comparisons, and Monte Carlo standard errors computed over defined replicates.
++    \item Eligible exposure $E_i$, alert episodes, patient-level uncertainty intervals, stratified bootstrap comparisons, and Monte Carlo standard errors computed over defined replicates.
+     \item Direct-transfer and target-local recalibration results in both hospital directions; the 49 nonprimary target partitions are summarized descriptively rather than treated as independent replications.
+     \item The fixed-boundary reference maxima used for Oracle-F and PaFAR-HC conditional-risk checks, with confirmation that no Oracle-T maxima are reused across replicate-specific templates.
+     \item Scripts that regenerate every manuscript table and figure from saved raw simulation summaries or documented intermediate data.
+ \end{enumerate}
+ 
++\section{Supplementary primary simulation results}\label{app:primary-supplement}
++
++\renewcommand{\thetable}{S\arabic{table}}
++\setcounter{table}{0}
++
++\subsection{Learner discrimination and fitting stability}
++
++Table~\ref{tab:learner-metrics} reports threshold-free metrics once per fitted Experiment II learner. The trapezoidal PR-AUC is computed from the locked smoothed test score and is distinct from XGBoost's early-stopping \texttt{aucpr}. Across 250 learner fits, the learner-failure frequency was zero.
++
++\input{supplementary/tableS1_learner_metrics.tex}
++
++\subsection{High-confidence exceedance audit}
++
++Table~\ref{tab:hc-exceedance} gives the prespecified $\alpha=0.10$ audit. The local S4 frequency combines the target $m_0=100,250,500$ calibration prefixes, as specified for this summary. The source PaFAR-HC threshold transferred unchanged to S4 is outside the exchangeability guarantee and exceeded the target conditional PFA in every replicate.
++
++\input{supplementary/tableS2_hc_exceedance.tex}
++
++\subsection{Alpha-grid reliability and paired Monte Carlo contrasts}
++
++The complete alpha-grid artifact reports PaFAR-F/T mean PFA and mean $\alpha_{m_0}$ at $\alpha\in\{0.02,0.05,0.10,0.15,0.20\}$. Every operating point within a replicate shares the same trajectories, learner, template, calibration sample, and test sample. Across S1--S3 and E1--E2, the PaFAR curves followed the discrete finite-sample reference closely; the grid is a threshold-recalculation analysis, not five independently generated simulations.
++
++Paired contrasts exploit the common test patients within each replicate and are retained in the reproducibility artifact for PaFAR-T versus PaFAR-F, PaFAR-HC versus PaFAR-F, and target-local versus direct-transfer strategies. For example, in S3 the PaFAR-T-minus-PaFAR-F long-stay PFA difference was $-0.0348$ with a Monte Carlo interval for the paired simulation contrast of $[-0.0363,-0.0333]$, while the overall-PFA difference was 0.0002 with interval $[-0.0005,0.0010]$. Local PaFAR-F at target $m_0=500$ reduced PFA relative to direct transfer by 0.1802 in S4 (interval $[-0.1828,-0.1776]$) and 0.0363 in E3 (interval $[-0.0431,-0.0295]$). These intervals quantify Monte Carlo precision; they are not patient-level intervals or significance tests.
++
++\subsection{Definedness, infinite thresholds, and failures}
++
++Undefined values retain their statistical meaning. A structurally non-scalar Bonferroni boundary, no alert, no valid detection, an empty evaluable sensitivity denominator, an infinite certified threshold, and learner failure are recorded separately. The 82,434 undefined cells in the complete long-format summary therefore must not be interpreted as failed replicates. There were no learner failures. All 550 infinite-threshold operating rows were Local PaFAR-HC with target $m_0=100$ at $\alpha=0.02$: 500 S4 rows and 50 E3 rows. For these rows, PFA and sensitivity are zero when their denominators exist, whereas PPV and median lead remain undefined. No undefined value was replaced by zero during Monte Carlo aggregation.
++
+ \bibliographystyle{plainnat}
+ \bibliography{PaFAR_references}
+ 

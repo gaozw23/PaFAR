@@ -1,0 +1,22 @@
+master_seed: 20260802
+condition: primary
+alpha: 0.10
+alpha_grid: [0.02, 0.05, 0.10, 0.15, 0.20]
+standardization_prevalences: [0.10, 0.05]
+delta: 0.05
+tmin: 6
+hmax: 120
+smooth_length: 3
+minimum_template_patients: 50
+experiment1:
+  scenarios: [S1, S2, S3, S4]
+  replicates: 500
+  nvalidation_non_events: 500
+  ncalibration_non_events: 500
+  ntest_non_events: 5000
+  ntest_events: 2000
+  oracle_nref: 1000000
+  oracle_chunk_size: 25000
+  target_reservoir: 500
+  target_prefixes: [100, 250, 500]
+  signal: 1.5

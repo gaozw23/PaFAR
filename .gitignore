@@ -1,0 +1,96 @@
+# Python environments and caches
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*
+secrets*
+token*
+
+# Raw and processed clinical data
+data/**
+!data/README.md
+*.psv
+
+# Generated outputs and checkpoints
+outputs/**
+!outputs/README.md
+*.ckpt
+*.pt
+*.pth
+
+# Large/generated research objects
+*.memmap
+*.mmap
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.joblib
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.csv.gz
+*.tsv.gz
+
+# Archives, failure caches, and temporary files
+archives/
+tmp/
+temp/
+**/failure_cache/
+**/failure_archive/
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# Logs
+*.log
+logs/
+
+# LaTeX build products
+literature/*.aux
+literature/*.bbl
+literature/*.blg
+literature/*.fdb_latexmk
+literature/*.fls
+literature/*.lof
+literature/*.lot
+literature/*.out
+literature/*.synctex.gz
+literature/*.toc
+
+# Manuscript backups and superseded rendered drafts
+literature/backups/
+literature/PaFAR_original_before_primary.*
+literature/PaFAR_results_filled.*
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Downloaded third-party reference
+v40i08.pdf
+
+# Existing local-only development output
+outputs/devcheck/
+outputs/.matplotlib/

@@ -1,0 +1,31 @@
+master_seed: 20260802
+alpha: 0.10
+alpha_grid: [0.02, 0.05, 0.10, 0.15, 0.20]
+standardization_prevalences: [0.10, 0.05]
+delta: 0.05
+tmin: 6
+hmax: 120
+smooth_length: 3
+minimum_template_patients: 50
+experiment2:
+  scenarios: [E1, E2]
+  replicates: 50
+  ntrain: 1500
+  nvalidation: 500
+  ncalibration: 600
+  ntest: 1500
+  target_reservoir: 500
+  target_test_patients: 2000
+  target_prefixes: [100, 250, 500]
+  num_boost_round: 400
+  early_stopping_rounds: 25
+  delta_s: 1.0
+conditions:
+  alpha_005:
+    alpha: 0.05
+    experiment2:
+      delta_s: 1.0
+  weak_signal:
+    alpha: 0.10
+    experiment2:
+      delta_s: 0.65

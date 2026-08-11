@@ -1,0 +1,25 @@
+{
+  "filters": {
+    "condition": "primary",
+    "is_alias": false,
+    "operating_alpha": 0.1,
+    "scenarios": [
+      "S4",
+      "E3"
+    ]
+  },
+  "methods": [
+    "Direct source transfer",
+    "Local PaFAR-F",
+    "Local PaFAR-T",
+    "Local PaFAR-HC"
+  ],
+  "operating_alpha": 0.1,
+  "source": "outputs/production/all_replicate_results.csv.gz",
+  "target_m0": [
+    0,
+    100,
+    250,
+    500
+  ]
+}

@@ -1,0 +1,37 @@
+project_root: .
+master_seed: 20260804
+raw:
+  A: data/physionet2019/raw/training_setA
+  B: data/physionet2019/raw/training_setB
+expected_counts: {A: 20336, B: 20000}
+analysis:
+  tmin: 6
+  hmax: 168
+  wmax: 6
+  smooth_length: 3
+  epsilon: 1.0e-6
+  scale_floor: 0.10
+  alpha: [0.05, 0.10]
+  delta: 0.05
+  template_bins: [6, 12, 24, 48, 72, 168]
+  template_min_patients: 50
+split:
+  internal: {train: 0.50, validation: 0.15, calibration: 0.15, test: 0.20}
+  source: {train: 0.60, validation: 0.20, calibration: 0.20}
+  target: {test: 0.50, reservoir: 0.50}
+target_m0: [100, 250, 500, 1000]
+xgboost:
+  max_depth: [2, 3, 4]
+  eta: [0.03, 0.05, 0.10]
+  min_child_weight: [1, 5]
+  subsample: 0.80
+  colsample_bytree: 0.80
+  num_boost_round: 800
+  early_stopping_rounds: 40
+  tree_method: hist
+  nthread: 4
+bootstrap_replicates: 1000
+feature_cache:
+  block_patients: 250
+  max_ram_fraction: 0.75
+

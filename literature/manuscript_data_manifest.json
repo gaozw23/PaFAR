@@ -1,0 +1,92 @@
+{
+  "manifest_version": 2,
+  "created_utc": "2026-08-03T13:11:27.307830+00:00",
+  "finalized_utc": "2026-08-03T13:34:01.7198669Z",
+  "backup_timestamp_utc": "20260803T131112Z",
+  "simulation_rerun": false,
+  "production_files_modified": false,
+  "backups": {
+    "tex": "literature/backups/PaFAR_before_primary_results_20260803T131112Z.tex",
+    "bib": "literature/backups/PaFAR_references_before_primary_results_20260803T131112Z.bib"
+  },
+  "baseline_compile": {
+    "command": "latexmk -pdf -interaction=nonstopmode -halt-on-error -jobname=PaFAR_original_before_primary PaFAR.tex",
+    "status": "success_after_TeX_font_cache_permission",
+    "pdf": "literature/PaFAR_original_before_primary.pdf",
+    "pages": 38
+  },
+  "final_compile": {
+    "command": "latexmk -pdf -interaction=nonstopmode -halt-on-error -jobname=PaFAR_results_filled PaFAR.tex",
+    "status": "success",
+    "pdf": "literature/PaFAR_results_filled.pdf",
+    "pdf_sha256": "200cf8d8280aae7eb87f38b00f5a50f2249648d7567baac80ee0505274322873",
+    "pdf_bytes": 684533,
+    "pages": 44,
+    "latex_errors": 0,
+    "undefined_control_sequences": 0,
+    "undefined_citations": 0,
+    "undefined_references": 0,
+    "multiply_defined_labels": 0,
+    "overfull_hboxes": 0,
+    "underfull_hboxes": 0,
+    "warnings": 0,
+    "visual_qa": "all 44 rendered pages reviewed; key pages additionally inspected at original raster resolution"
+  },
+  "tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m pytest -q",
+    "status": "passed",
+    "passed": 55,
+    "duration_seconds": 6.79
+  },
+  "before_sha256": {
+    "literature/PaFAR.tex": "b2a352df06faab768f9036e80ba89f4b3d9c96c2fa5014103a29d1d7c57157f3",
+    "literature/PaFAR_references.bib": "d857eb33093b8cd9d63205f561aed17de210cefe0de9fc5728672027977f8113",
+    "outputs/production/PRODUCTION_LOCK.json": "ebe39073bb8fcfd0bd416307cc3f93e4730514180701524c45ddaf768ee10f86",
+    "outputs/production/all_replicate_results.csv.gz": "93f01b67fdd6277ccac5e9876137ed6468356a983c466a95d78a55f3dfeefcf2",
+    "outputs/production/learner_metrics.csv": "9e5613f66e2e3ee3cbea414c147fa76d6ddf9a59118ce03be7cddde5a6f43bfa",
+    "outputs/production/summary_long.csv": "f0a076fdebf4e04b801f7a4bc1da0e76d2f274808a2cac40c63261da3f9a7d30"
+  },
+  "after_sha256": {
+    "literature/PaFAR.tex": "8316f1cec629a514c575a7604dfc5099eeea03a0dd7cc0a62a497228c6ebce9b",
+    "literature/PaFAR_references.bib": "d857eb33093b8cd9d63205f561aed17de210cefe0de9fc5728672027977f8113",
+    "outputs/production/PRODUCTION_LOCK.json": "ebe39073bb8fcfd0bd416307cc3f93e4730514180701524c45ddaf768ee10f86",
+    "outputs/production/all_replicate_results.csv.gz": "93f01b67fdd6277ccac5e9876137ed6468356a983c466a95d78a55f3dfeefcf2",
+    "outputs/production/learner_metrics.csv": "9e5613f66e2e3ee3cbea414c147fa76d6ddf9a59118ce03be7cddde5a6f43bfa",
+    "outputs/production/summary_long.csv": "f0a076fdebf4e04b801f7a4bc1da0e76d2f274808a2cac40c63261da3f9a7d30"
+  },
+  "production_raw_before": {
+    "checkpoint_count": 2250,
+    "sidecar_count": 2250,
+    "total_bytes": 34165024,
+    "latest_mtime_ns": 1785754970663634200,
+    "latest_mtime_utc": "2026-08-03T11:02:50.663634+00:00"
+  },
+  "production_raw_after": {
+    "checkpoint_count": 2250,
+    "sidecar_count": 2250,
+    "total_bytes": 34165024,
+    "latest_mtime_ns": 1785754970663634200,
+    "latest_mtime_utc": "2026-08-03T11:02:50.6636342Z"
+  },
+  "manuscript_tables": {
+    "Table 3": {"rows": 12, "source": "literature/generated_tables/table3_experiment1.csv"},
+    "Table 4": {"rows": 8, "source": "literature/generated_tables/table4_experiment2.csv"},
+    "Table 5": {"rows": 12, "source": "literature/generated_tables/table5_target_shift.csv"},
+    "Table S1": {"rows": 3, "source": "literature/supplementary/tableS1_learner_metrics.csv"},
+    "Table S2": {"rows": 5, "source": "literature/supplementary/tableS2_hc_exceedance.csv"},
+    "Table S3": {"rows": 50, "source": "literature/supplementary/tableS3_alpha_grid.csv"},
+    "Table S4": {"rows": 7, "source": "literature/supplementary/tableS4_definedness.csv"},
+    "paired_contrasts": {"rows": 96, "source": "literature/supplementary/paired_contrasts.csv"}
+  },
+  "manuscript_figures": [
+    "literature/figures/figure2_cumulative_false_alert.pdf",
+    "literature/figures/figure3_pfa_reliability.pdf",
+    "literature/figures/figure4_sens3_vs_pfa.pdf",
+    "literature/figures/figure5_conditional_pfa.pdf",
+    "literature/figures/figure6_target_recalibration.pdf"
+  ],
+  "postprocessor": "scripts/build_primary_manuscript_outputs.py",
+  "postprocessor_scope": "read-only locked primary outputs; no simulation runner imported or invoked",
+  "diff": "literature/PaFAR_primary_results.diff",
+  "revision_report": "literature/PRIMARY_RESULTS_REVISION_REPORT.md"
+}

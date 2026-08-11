@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pafar-sim"
+version = "0.1.0"
+description = "Reproducible simulations for patient-level false-alarm risk calibration"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24", "pandas>=2.0", "scipy>=1.10", "scikit-learn>=1.3",
+  "xgboost>=2.0", "matplotlib>=3.7", "joblib>=1.3", "pyyaml>=6.0", "psutil>=5.9"
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.4"]
+
+[project.scripts]
+pafar-sim = "pafar_sim.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+pythonpath = ["src"]

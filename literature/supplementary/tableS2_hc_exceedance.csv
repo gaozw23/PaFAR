@@ -1,0 +1,6 @@
+Setting,Alpha,Delta,Exceedance frequency,Replicates
+S1 PaFAR-HC,0.10,0.05,0.040,500
+S2 PaFAR-HC,0.10,0.05,0.032,500
+S3 PaFAR-HC,0.10,0.05,0.048,500
+S4 Local PaFAR-HC,0.10,0.05,0.038,1500
+S4 source PaFAR-HC,0.10,0.05,1.000,500

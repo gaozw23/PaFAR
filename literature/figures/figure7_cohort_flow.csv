@@ -1,0 +1,47 @@
+panel,hospital,category,value
+flow,A,raw,20336
+flow,A,primary non-event,18546
+flow,A,primary event,1585
+flow,A,below landmark,0
+flow,A,left truncated,203
+flow,A,onset unreconstructable/outside,2
+flow,B,raw,20000
+flow,B,primary non-event,18858
+flow,B,primary event,906
+flow,B,below landmark,0
+flow,B,left truncated,223
+flow,B,onset unreconstructable/outside,13
+split,A,calibration non-event,2782
+split,A,calibration event,238
+split,B,calibration non-event,2829
+split,B,calibration event,136
+split,A,test non-event,3709
+split,A,test event,317
+split,B,test non-event,3771
+split,B,test event,181
+split,A,train non-event,9273
+split,A,train event,792
+split,B,train non-event,9429
+split,B,train event,453
+split,A,validation non-event,2782
+split,A,validation event,238
+split,B,validation non-event,2829
+split,B,validation event,136
+length,A,<6,0
+length,A,6-12,467
+length,A,13-24,4094
+length,A,25-48,10926
+length,A,49-72,4308
+length,A,73-96,174
+length,A,97-120,113
+length,A,121-168,127
+length,A,>168,127
+length,B,<6,0
+length,B,6-12,676
+length,B,13-24,4887
+length,B,25-48,10249
+length,B,49-72,3688
+length,B,73-96,163
+length,B,97-120,102
+length,B,121-168,112
+length,B,>168,123
