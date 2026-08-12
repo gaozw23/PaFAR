@@ -1,8 +1,0 @@
-Scenario,Operating rows,pfa defined,pfa undefined,sens3 defined,sens3 undefined,ppv3_standardized defined,ppv3_standardized undefined,median_lead defined,median_lead undefined,threshold defined,threshold undefined,No-alert rows,No-valid-detection rows,No-evaluable-denominator rows,Infinite certified threshold rows,Learner failure rows,Structurally non-scalar threshold rows
-S1,17500,17500,0,17500,0,17500,0,17500,0,15000,2500,0,0,0,0,0,2500
-S2,17500,17500,0,17500,0,17500,0,17500,0,15000,2500,0,0,0,0,0,2500
-S3,17500,17500,0,17500,0,17500,0,17500,0,15000,2500,0,0,0,0,0,2500
-S4,40000,40000,0,40000,0,39500,500,39500,500,37000,3000,500,500,0,500,0,2500
-E1,3200,3200,0,3200,0,3194,6,3163,37,2700,500,6,281,0,0,0,500
-E2,3200,3200,0,3200,0,3196,4,3170,30,2700,500,4,258,0,0,0,500
-E3,3850,3850,0,3850,0,3798,52,3781,69,3550,300,52,246,0,50,0,250

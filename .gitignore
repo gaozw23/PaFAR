@@ -1,3 +1,13 @@
+# Manuscript source and compiled paper
+PaFAR.pdf
+literature/
+
+# Clinical data
+data/
+
+# Generated outputs
+outputs/
+
 # Python environments and caches
 .venv/
 venv/
@@ -21,23 +31,12 @@ credentials*
 secrets*
 token*
 
-# Raw and processed clinical data
-data/**
-!data/README.md
+# Large generated objects and raw records
 *.psv
-
-# Generated outputs and checkpoints
-outputs/**
-!outputs/README.md
-*.ckpt
-*.pt
-*.pth
-
-# Large/generated research objects
-*.memmap
-*.mmap
 *.npy
 *.npz
+*.memmap
+*.mmap
 *.pkl
 *.pickle
 *.joblib
@@ -47,11 +46,16 @@ outputs/**
 *.hdf5
 *.csv.gz
 *.tsv.gz
+*.ckpt
+*.pt
+*.pth
 
-# Archives, failure caches, and temporary files
+# Temporary, archive, log, and failure-cache content
 archives/
 tmp/
 temp/
+logs/
+*.log
 **/failure_cache/
 **/failure_archive/
 *.zip
@@ -60,28 +64,19 @@ temp/
 *.tar
 *.tar.gz
 
-# Logs
-*.log
-logs/
+# LaTeX generated files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.toc
 
-# LaTeX build products
-literature/*.aux
-literature/*.bbl
-literature/*.blg
-literature/*.fdb_latexmk
-literature/*.fls
-literature/*.lof
-literature/*.lot
-literature/*.out
-literature/*.synctex.gz
-literature/*.toc
-
-# Manuscript backups and superseded rendered drafts
-literature/backups/
-literature/PaFAR_original_before_primary.*
-literature/PaFAR_results_filled.*
-
-# OS/editor files
+# OS and editor files
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -90,7 +85,3 @@ desktop.ini
 
 # Downloaded third-party reference
 v40i08.pdf
-
-# Existing local-only development output
-outputs/devcheck/
-outputs/.matplotlib/

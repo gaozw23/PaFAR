@@ -1,9 +1,0 @@
-{
-  "alphas": [
-    0.05,
-    0.1
-  ],
-  "figure": 9,
-  "input_csv_sha256": "8b408ef156eb9c129cb867062687746ac06adbc024600a41c4503f501792d88e",
-  "input_rows": 14
-}
