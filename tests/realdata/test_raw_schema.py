@@ -8,6 +8,10 @@ def test_actual_file_counts_and_unique_names():
     assert len(a)==20336 and len(b)==20000
     assert len({x.stem for x in a+b})==40336
 def test_actual_41_column_schema():
-    for path in (ROOT/"data/physionet2019/raw/training_setA/p000001.psv",ROOT/"data/physionet2019/raw/training_setB/p100001.psv"):
-        assert parse_header(path)==EXPECTED_COLUMNS and len(EXPECTED_COLUMNS)==41
-
+    for directory in (
+        ROOT / "data/physionet2019/raw/training_setA",
+        ROOT / "data/physionet2019/raw/training_setB",
+    ):
+        paths = sorted(directory.glob("*.psv"))
+        assert paths
+        assert parse_header(paths[0]) == EXPECTED_COLUMNS and len(EXPECTED_COLUMNS) == 41

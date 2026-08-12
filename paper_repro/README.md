@@ -1,53 +1,72 @@
-# Reproducing the PaFAR analyses
+# Paper reproduction
 
-This directory documents how the code produces the analyses and manuscript-ready artifacts. It does not contain manuscript source, compiled papers, raw data, or generated results.
+The files in this directory are small, transparent entry points for reproducing the PaFAR analyses. Algorithm implementations remain in `src/pafar_sim/`; maintained lower-level commands remain in `scripts/`.
 
-Run all commands from the repository root after installing the package and its test dependencies into a project-local environment.
+## 1. Environment
 
-## Primary simulations
+Python 3.10 or later is recommended. From the repository root:
 
-The versioned primary configurations are `configs/exp1_primary.yaml` and `configs/exp2_primary.yaml`. The complete prespecified command record, including scenario and replicate ranges, is maintained in `docs/RUNBOOK.md`.
-
-Representative entry points are:
-
-```powershell
-& '.\.venv\Scripts\python.exe' scripts\run_exp1.py --config configs\exp1_primary.yaml --scenario S1 --replicate-start 0 --replicate-end 9 --n-jobs 4 --output-root outputs\production
-& '.\.venv\Scripts\python.exe' scripts\run_exp2.py --config configs\exp2_primary.yaml --scenario E1 --replicate-start 0 --replicate-end 99 --n-jobs 4 --output-root outputs\production
+```bash
+python -m venv .venv
+python -m pip install --upgrade pip
+python -m pip install -e ".[test]"
+python paper_repro/setup_environment.py --check-import
 ```
 
-Use the exact configuration, seed, scenario, and replicate range required by the analysis plan. Generated outputs are written under `outputs/` and are not version controlled.
+The helper only reports environment readiness and recommended commands; it does not install software or modify the system.
 
-## Real-data analysis
+## 2. Primary simulation
 
-The retrospective pipeline uses PhysioNet/Computing in Cardiology Challenge 2019 data with `configs/realdata_primary.yaml` and `configs/realdata_robustness.yaml`. Validate the local resources before running any analysis:
+The wrapper uses `configs/exp1_primary.yaml` and `configs/exp2_primary.yaml`, delegates to the maintained simulation runners, and requires explicit confirmation:
 
-```powershell
-& '.\.venv\Scripts\python.exe' scripts\check_realdata_environment.py --config configs\realdata_primary.yaml
-& '.\.venv\Scripts\python.exe' scripts\run_realdata_pipeline.py --config configs\realdata_primary.yaml --check-only
+```bash
+python paper_repro/run_simulation.py --experiment exp1 --resume --confirm RUN_PAFAR_PRIMARY_SIMULATION
+python paper_repro/run_simulation.py --experiment exp2 --resume --confirm RUN_PAFAR_PRIMARY_SIMULATION
 ```
 
-The full pipeline is guarded by explicit confirmation values implemented in `scripts/run_realdata_pipeline.py`. Consult that entry point and the project documentation before selecting a stage. Do not treat `--check-only` as an analysis run.
+These are production-scale analyses. Review `--help`, the frozen configuration, expected replicate counts, and compute requirements before execution. Existing production output is never reused unless `--resume` is supplied.
 
-PhysioNet raw data are not included. Authorized users must obtain the data and official evaluation resources from PhysioNet and place them at the relative locations declared in the configuration. Patient files, processed datasets, feature caches, and patient-level outputs remain local.
+## 3. Real-data analysis
 
-## Manuscript-ready tables and figures
+The retrospective analysis uses PhysioNet/Computing in Cardiology Challenge 2019 data. Raw data are not included and are never downloaded by these helpers. Place authorized files at:
 
-The existing small entry-point scripts remain under `scripts/` so there is a single maintained implementation:
-
-```powershell
-& '.\.venv\Scripts\python.exe' scripts\build_primary_manuscript_outputs.py --check-only
-& '.\.venv\Scripts\python.exe' scripts\build_realdata_manuscript_outputs.py --config configs\realdata_primary.yaml
+```text
+data/physionet2019/raw/training_setA/
+data/physionet2019/raw/training_setB/
 ```
 
-The first command validates the available primary simulation summaries without rerunning simulations. The real-data builder consumes the locked local summaries produced by the retrospective pipeline. The scripts write manuscript-ready artifacts into the locally retained manuscript/output locations; those generated files are not tracked in this code repository.
+Check the setup, then explicitly confirm the formal pipeline:
 
-No entry-point script is copied into this directory because duplicating executable code would create maintenance risk. The authoritative scripts are referenced above.
+```bash
+python paper_repro/run_realdata.py --check-only
+python paper_repro/run_realdata.py --stage all --resume --confirm RUN_PAFAR_REALDATA_PRIMARY
+```
 
-## Excluded research artifacts
+The wrapper does not modify raw PSV files and does not copy the real-data implementation into this directory.
 
-- PhysioNet raw data and official evaluation downloads are not included.
-- Large simulation and real-data outputs are not included.
-- Feature caches, fitted models, checkpoints, bootstrap objects, logs, and failure archives are not included.
-- Manuscript source and compiled paper files are not included in the code repository.
+## 4. Reproducing manuscript tables and figures
 
-These exclusions affect Git tracking only; they do not prescribe deletion of a researcher's authorized local data or generated analysis artifacts.
+Build manuscript-ready artifacts only after saved simulation and real-data summaries exist:
+
+```bash
+python paper_repro/build_paper_outputs.py --component all --confirm BUILD_PAFAR_PAPER_OUTPUTS
+```
+
+- Tables 3–5 come from saved simulation results.
+- Tables 6–7 come from saved real-data results.
+- Figures 2–6 come from saved simulation results.
+- Figures 7–10 come from saved real-data results.
+
+The wrapper calls `scripts/build_primary_manuscript_outputs.py` and `scripts/build_realdata_manuscript_outputs.py`. It does not run simulations, train XGBoost, tune on the test set, or change statistical results.
+
+## 5. Data availability
+
+Raw PhysioNet patient records and official evaluation resources must be obtained separately from authorized PhysioNet sources and used under their applicable terms.
+
+## 6. Generated outputs
+
+Large checkpoints, models, feature caches, bootstrap objects, raw simulation output, real-data output, and generated figures are excluded from Git version control. They remain under ignored local `outputs/`, `data/`, and manuscript artifact paths.
+
+## 7. Manuscript
+
+Manuscript `.tex` and `.pdf` files are not included in the code repository. The reproduction workflow generates local tables and figures for integration into separately maintained manuscript source.

@@ -1,14 +1,4 @@
-# Manuscript source and compiled paper
-PaFAR.pdf
-literature/
-
-# Clinical data
-data/
-
-# Generated outputs
-outputs/
-
-# Python environments and caches
+# Python
 .venv/
 venv/
 env/
@@ -17,26 +7,71 @@ env/
 .ruff_cache/
 **/__pycache__/
 *.py[cod]
-*.pyo
 
-# Secrets and credentials
-.env
-.env.*
-!.env.example
-*.pem
-*.key
-*.p12
-*.pfx
-credentials*
-secrets*
-token*
+# Local manuscript
+literature/
+PaFAR.pdf
+*.tex
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.toc
 
-# Large generated objects and raw records
+# Clinical data
+data/
 *.psv
-*.npy
-*.npz
+
+# Generated outputs
+outputs/
+
+# Local development archives and logs
+archives/
+tmp/
+temp/
+logs/
+*.log
+**/failure_cache/
+**/failure_archive/
+
+# Local-only engineering records and one-off recovery helpers
+docs/GITHUB_PUBLISH_REPORT.md
+docs/GITHUB_UPLOAD_MANIFEST.md
+docs/IMPLEMENTATION_REPORT.md
+docs/LEARNER_DIAGNOSTIC_REPORT.md
+docs/METRIC_FORMULA_AUDIT.md
+docs/NONFINITE_THRESHOLD_SERIALIZATION_FIX.md
+docs/NONFINITE_THRESHOLD_SERIALIZATION_FIX_REPORT.md
+docs/PERFORMANCE_NOTES.md
+docs/PREPRODUCTION_AUDIT_REPORT.md
+docs/RUNBOOK.md
+docs/SPEC_TRACEABILITY.md
+docs/STATISTICAL_IMPLEMENTATION_FIX_REPORT.md
+docs/TEST_REPORT.md
+docs/WINDOWS_MEMMAP_FAILURE_ANALYSIS.md
+scripts/benchmark.py
+scripts/freeze_primary_production.py
+scripts/resume_realdata_after_cache_v2.ps1
+scripts/run_preproduction_audit.py
+scripts/run_production_pilot.py
+scripts/run_realdata_feature_smoke.py
+scripts/run_realdata_primary.ps1
+scripts/run_realdata_primary.py
+scripts/run_realdata_qc.py
+scripts/run_realdata_robustness.py
+scripts/run_smoke.py
+scripts/run_tests.py
+
+# Large generated research objects
 *.memmap
 *.mmap
+*.npy
+*.npz
 *.pkl
 *.pickle
 *.joblib
@@ -50,38 +85,31 @@ token*
 *.pt
 *.pth
 
-# Temporary, archive, log, and failure-cache content
-archives/
-tmp/
-temp/
-logs/
-*.log
-**/failure_cache/
-**/failure_archive/
+# Archives
 *.zip
 *.7z
 *.rar
 *.tar
 *.tar.gz
 
-# LaTeX generated files
-*.aux
-*.bbl
-*.blg
-*.fdb_latexmk
-*.fls
-*.lof
-*.lot
-*.out
-*.synctex.gz
-*.toc
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*
+secrets*
+token*
 
-# OS and editor files
+# IDE / OS
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
 desktop.ini
-.vscode/
-.idea/
 
 # Downloaded third-party reference
 v40i08.pdf
