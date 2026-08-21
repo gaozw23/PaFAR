@@ -92,8 +92,8 @@ After the corresponding saved summaries exist, regenerate manuscript-ready artif
 python paper_repro/build_paper_outputs.py --component all --confirm BUILD_PAFAR_PAPER_OUTPUTS
 ```
 
-- Tables 3–5 and Figures 2–6 are derived from saved simulation summaries.
-- Tables 6–7 and Figures 7–10 are derived from saved real-data summaries.
+- Simulation tables and figures are derived from saved simulation summaries.
+- Retrospective-analysis tables and figures are derived from saved real-data summaries.
 - Outputs are written under ignored local `literature/` and `outputs/` paths.
 
 ## Tests and reproducibility checks

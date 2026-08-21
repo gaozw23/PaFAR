@@ -5,8 +5,21 @@ env/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.ipynb_checkpoints/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
 **/__pycache__/
 *.py[cod]
+
+# Python packaging
+build/
+dist/
+*.egg-info/
 
 # Local manuscript
 literature/
@@ -24,7 +37,8 @@ PaFAR.pdf
 *.toc
 
 # Clinical data
-data/
+/data/*
+!/data/README.md
 *.psv
 
 # Generated outputs
@@ -84,6 +98,8 @@ scripts/run_tests.py
 *.ckpt
 *.pt
 *.pth
+*.ubj
+*.page
 
 # Archives
 *.zip

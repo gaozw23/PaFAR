@@ -52,10 +52,8 @@ Build manuscript-ready artifacts only after saved simulation and real-data summa
 python paper_repro/build_paper_outputs.py --component all --confirm BUILD_PAFAR_PAPER_OUTPUTS
 ```
 
-- Tables 3–5 come from saved simulation results.
-- Tables 6–7 come from saved real-data results.
-- Figures 2–6 come from saved simulation results.
-- Figures 7–10 come from saved real-data results.
+- Simulation tables and figures come from saved simulation results.
+- Retrospective-analysis tables and figures come from saved real-data results.
 
 The wrapper calls `scripts/build_primary_manuscript_outputs.py` and `scripts/build_realdata_manuscript_outputs.py`. It does not run simulations, train XGBoost, tune on the test set, or change statistical results.
 
