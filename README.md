@@ -134,3 +134,7 @@ python -m pytest -q
 If you use this software, please cite the accompanying manuscript:
 
 > Gao, Z. and Sun, W. *PaFAR: Finite-Sample Patient-Level False-Alarm Calibration for Repeated Risk Monitoring.* Publication details will be updated after publication.
+
+## License
+
+The source code in this repository is released under the [MIT License](LICENSE).
