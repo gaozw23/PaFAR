@@ -1,58 +1,16 @@
 # PaFAR
 
-Code and reproducibility materials accompanying the manuscript *PaFAR: Finite-Sample Patient-Level False-Alarm Calibration for Repeated Risk Monitoring* by Zhuowei Gao and Weipeng Sun, School of Mathematics, Jilin University, Changchun, Jilin 130012, China.
+Code and reproducibility materials for *PaFAR: Finite-Sample Patient-Level False-Alarm Calibration for Repeated Risk Monitoring* by Zhuowei Gao and Weipeng Sun, School of Mathematics, Jilin University.
 
 ## Overview
 
-PaFAR calibrates repeated risk monitoring at the level of a complete monitoring episode rather than at individual decision times. Each non-event calibration trajectory contributes one maximum score, and a finite-sample corrected order statistic is used to select the deployment threshold.
+PaFAR calibrates repeated risk monitoring at the level of a complete monitoring episode. Each eligible non-event calibration trajectory contributes one maximum score, and a finite-sample corrected order statistic determines the alert threshold.
 
-PaFAR is a calibration layer for a frozen score trajectory. It does not refit the underlying risk model, improve discrimination by itself, or imply clinical effectiveness, universal robustness, or conditional subgroup control.
+PaFAR is a calibration layer applied to frozen score trajectories. It does not refit the underlying risk model or change its discrimination.
 
-## Repository scope
+## Installation
 
-This repository contains:
-
-- analysis and simulation code;
-- frozen configuration files;
-- regression and implementation tests;
-- environment checks and reproduction scripts.
-
-The repository does not redistribute the raw PhysioNet records, manuscript submission files, or the large generated output directory. Machine-readable manuscript results are not included in the current repository tree.
-
-## Manuscript code version
-
-The code version audited for the manuscript is:
-
-```text
-c4a50d8b303a3d9994d8c9355724e5388f6ef613
-```
-
-That commit is preserved in the repository history. Subsequent commits, if any, are limited to public-release documentation and repository presentation and do not alter the audited statistical implementation.
-
-## Repository structure
-
-```text
-.
-├── configs/          Frozen simulation and retrospective-analysis configurations
-├── data/             Public data instructions only; clinical records remain local
-├── docs/             Design decisions and reproducibility guidance
-├── paper_repro/      Guarded, user-facing reproduction entry points
-├── scripts/          Maintained simulation, analysis, aggregation, and output builders
-├── src/pafar_sim/    PaFAR implementation
-├── tests/            Regression and implementation tests
-├── pyproject.toml    Package metadata and dependency specification
-└── requirements.txt  Flat dependency reference
-```
-
-## Data
-
-The retrospective application uses the public training component of the [PhysioNet/Computing in Cardiology Challenge 2019](https://physionet.org/content/challenge-2019/1.0.0/), version 1.0.0, DOI [10.13026/v64v-d857](https://doi.org/10.13026/v64v-d857).
-
-Raw clinical records are not redistributed in this repository. Obtain the data through PhysioNet and place the two training sets in the repository-relative locations documented in [`data/README.md`](data/README.md).
-
-## Environment and installation
-
-Python 3.10 or later is required by `pyproject.toml`. From the repository root:
+PaFAR requires Python 3.10 or later.
 
 ```bash
 git clone https://github.com/gaozw23/PaFAR.git
@@ -60,74 +18,58 @@ cd PaFAR
 python -m venv .venv
 python -m pip install --upgrade pip
 python -m pip install -e ".[test]"
-python paper_repro/setup_environment.py --check-import
 ```
 
-`pyproject.toml` is the authoritative package definition. `requirements.txt` is retained as a flat dependency reference.
+## Data
 
-## Reproduction
+The retrospective analysis uses version 1.0.0 of the public training data from the [PhysioNet/Computing in Cardiology Challenge 2019](https://physionet.org/content/challenge-2019/1.0.0/) (DOI: [10.13026/v64v-d857](https://doi.org/10.13026/v64v-d857)). Raw clinical records are not distributed with this repository. See [`data/README.md`](data/README.md) for the expected local layout.
 
-### 1. Environment and lightweight verification
+## Reproducing the paper
 
-Confirm that the package is importable and run the test suite:
+See [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) for configuration details, data layout, computational requirements, and the calibration rules used in the analyses.
 
-```bash
-python paper_repro/setup_environment.py --check-import
-python -m pytest -q
-```
+### Simulations
 
-These checks do not run the production simulations or the retrospective analysis.
-
-### 2. Primary simulations
-
-The guarded wrappers use the frozen primary configurations and require an explicit confirmation value:
+The primary simulations use the configurations under `configs/`:
 
 ```bash
 python paper_repro/run_simulation.py --experiment exp1 --resume --confirm RUN_PAFAR_PRIMARY_SIMULATION
 python paper_repro/run_simulation.py --experiment exp2 --resume --confirm RUN_PAFAR_PRIMARY_SIMULATION
 ```
 
-These are computationally intensive production workflows. Review [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md), the selected configuration, and `python paper_repro/run_simulation.py --help` before execution. Generated results are written beneath the ignored `outputs/` directory.
+### Retrospective analysis
 
-### 3. PhysioNet workflow
-
-After obtaining the required PhysioNet files, validate the local layout without running the analysis:
+After placing the PhysioNet files in the documented locations, check the inputs and run the analysis with:
 
 ```bash
 python paper_repro/run_realdata.py --check-only
-```
-
-Run the maintained retrospective-analysis pipeline only when the required local data are present:
-
-```bash
 python paper_repro/run_realdata.py --stage all --resume --confirm RUN_PAFAR_REALDATA_PRIMARY
 ```
 
-The raw clinical records are not downloaded by these commands and are not included in Git.
+### Tables and figures
 
-### 4. Tables and figures
-
-Existing saved simulation and retrospective-analysis summaries are required before manuscript-ready artifacts can be regenerated. Check that the required summaries are present without writing outputs:
+Saved simulation and retrospective-analysis summaries are required to generate the manuscript tables and figures:
 
 ```bash
 python paper_repro/build_paper_outputs.py --component all --check-only
-```
-
-Then build the artifacts with:
-
-```bash
 python paper_repro/build_paper_outputs.py --component all --confirm BUILD_PAFAR_PAPER_OUTPUTS
 ```
 
-The large saved summaries and generated artifacts are not distributed in this repository, so this step is not a one-command workflow from a fresh clone. See [`paper_repro/README.md`](paper_repro/README.md) for the maintained entry-point details.
+The saved summaries and generated artifacts are not distributed with the repository. Additional entry-point information is available in [`paper_repro/README.md`](paper_repro/README.md).
+
+## Code version
+
+The numerical results reported in the manuscript correspond to commit `c4a50d8b303a3d9994d8c9355724e5388f6ef613`.
+
+Later documentation-only changes do not alter the implementation used for the reported results.
 
 ## Tests
-
-The test suite covers calibration, alerting, patient-level splitting, causal feature construction, reproducible random-number streams, output schemas, and saved-output generation:
 
 ```bash
 python -m pytest -q
 ```
+
+The tests cover the principal calibration, alerting, patient-level splitting, causal feature construction, reproducibility, and output-generation rules.
 
 ## Citation
 
